@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Rollout.Api/Rollout.Api.csproj" />
+    <Project Path="src/Rollout.Application/Rollout.Application.csproj" />
+    <Project Path="src/Rollout.Domain/Rollout.Domain.csproj" />
+    <Project Path="src/Rollout.Infrastructure/Rollout.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Rollout.IntegrationTests/Rollout.IntegrationTests.csproj" />
+    <Project Path="tests/Rollout.UnitTests/Rollout.UnitTests.csproj" />
+  </Folder>
+</Solution>

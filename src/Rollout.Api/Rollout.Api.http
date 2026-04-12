@@ -1,0 +1,6 @@
+@Rollout.Api_HostAddress = http://localhost:5286
+
+GET {{Rollout.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
