@@ -23,4 +23,35 @@ public sealed class FeatureFlagRepository : IFeatureFlagRepository
     {
         return _dbContext.FeatureFlags.AnyAsync(entity => entity.Key == key, cancellationToken);
     }
+
+    public async Task<FeatureFlag?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await _dbContext.FeatureFlags.FindAsync(new object[] { id }, cancellationToken);
+    }
+
+    public async Task<FeatureFlag?> GetByKeyAsync(string key, CancellationToken cancellationToken)
+    {
+        return await _dbContext.FeatureFlags
+            .AsNoTracking()
+            .FirstOrDefaultAsync(entity => entity.Key == key, cancellationToken);
+    }
+
+    public async Task<IEnumerable<FeatureFlag>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        return await _dbContext.FeatureFlags
+            .AsNoTracking()
+            .ToListAsync(cancellationToken);
+    }
+
+    public async Task UpdateAsync(FeatureFlag featureFlag, CancellationToken cancellationToken)
+    {
+        _dbContext.FeatureFlags.Update(featureFlag);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task DeleteAsync(FeatureFlag featureFlag, CancellationToken cancellationToken)
+    {
+        _dbContext.FeatureFlags.Remove(featureFlag);
+        await _dbContext.SaveChangesAsync(cancellationToken);
+    }
 }
