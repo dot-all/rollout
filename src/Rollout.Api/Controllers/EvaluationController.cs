@@ -6,6 +6,9 @@ using Rollout.Application.Features.FeatureFlags.Evaluation;
 
 namespace Rollout.Api.Controllers;
 
+/// <summary>
+/// Provides endpoints for feature flag evaluation.
+/// </summary>
 [ApiVersion(1)]
 [Route("api/v{version:apiVersion}/evaluate")]
 [ApiController]
@@ -18,10 +21,13 @@ public sealed class EvaluationController : ControllerBase
         _sender = sender;
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] string key, [FromQuery] string userId)
+    /// <summary>
+    /// Evaluates if a feature flag is enabled for the provided user context.
+    /// </summary>
+    [HttpPost("{key}")]
+    public async Task<IActionResult> Post(string key, [FromBody] UserContextDto request)
     {
-        var query = new EvaluateFeatureQuery(key, userId);
+        var query = new EvaluateFeatureQuery(key, request);
         Result<EvaluationResponseDto> result = await _sender.Send(query);
 
         if (result.IsFailed)
@@ -35,3 +41,4 @@ public sealed class EvaluationController : ControllerBase
         return Ok(result.Value);
     }
 }
+

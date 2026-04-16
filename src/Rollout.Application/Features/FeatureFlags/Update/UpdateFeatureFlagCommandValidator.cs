@@ -1,7 +1,11 @@
+using System;
 using FluentValidation;
 
 namespace Rollout.Application.Features.FeatureFlags.Update;
 
+/// <summary>
+/// Validator for the <see cref="UpdateFeatureFlagCommand"/>.
+/// </summary>
 public sealed class UpdateFeatureFlagCommandValidator : AbstractValidator<UpdateFeatureFlagCommand>
 {
     public UpdateFeatureFlagCommandValidator()
@@ -16,5 +20,22 @@ public sealed class UpdateFeatureFlagCommandValidator : AbstractValidator<Update
 
         RuleFor(command => command.RolloutPercentage)
             .InclusiveBetween(0, 100).WithMessage("Rollout percentage must be between 0 and 100.");
+
+        RuleForEach(command => command.TargetingRules).ChildRules(rule =>
+        {
+            rule.RuleFor(r => r.Attribute)
+                .NotEmpty().WithMessage("Targeting rule attribute is required.")
+                .MaximumLength(100);
+
+            rule.RuleFor(r => r.Operator)
+                .NotEmpty().WithMessage("Targeting rule operator is required.")
+                .Must(op => new[] { "Equals", "In", "Contains" }.Contains(op, StringComparer.OrdinalIgnoreCase))
+                .WithMessage("Operator must be Equals, In, or Contains.");
+
+            rule.RuleFor(r => r.Value)
+                .NotEmpty().WithMessage("Targeting rule value is required.")
+                .MaximumLength(500);
+        });
     }
 }
+

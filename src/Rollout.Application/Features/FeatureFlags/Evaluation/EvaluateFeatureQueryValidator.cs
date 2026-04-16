@@ -2,6 +2,9 @@ using FluentValidation;
 
 namespace Rollout.Application.Features.FeatureFlags.Evaluation;
 
+/// <summary>
+/// Validator for the <see cref="EvaluateFeatureQuery"/>.
+/// </summary>
 public sealed class EvaluateFeatureQueryValidator : AbstractValidator<EvaluateFeatureQuery>
 {
     public EvaluateFeatureQueryValidator()
@@ -9,7 +12,11 @@ public sealed class EvaluateFeatureQueryValidator : AbstractValidator<EvaluateFe
         RuleFor(x => x.Key)
             .NotEmpty().WithMessage("Key is required.");
 
-        RuleFor(x => x.UserId)
+        RuleFor(x => x.UserContext)
+            .NotNull().WithMessage("User context is required.");
+
+        RuleFor(x => x.UserContext.UserId)
             .NotEmpty().WithMessage("UserId is required.");
     }
 }
+

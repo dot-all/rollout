@@ -10,9 +10,13 @@ using Rollout.Application.Features.FeatureFlags.Update;
 
 namespace Rollout.Api.Controllers;
 
+/// <summary>
+/// Provides administrative endpoints for managing feature flags.
+/// </summary>
 [ApiVersion(1)]
-[Route("api/featureflags")]
+[Route("api/v{version:apiVersion}/featureflags")]
 [ApiController]
+
 public sealed class FeatureFlagsController : ControllerBase
 {
     private readonly ISender _sender;
@@ -22,6 +26,9 @@ public sealed class FeatureFlagsController : ControllerBase
         _sender = sender;
     }
 
+    /// <summary>
+    /// Retrieves a specific feature flag by its ID.
+    /// </summary>
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -35,6 +42,9 @@ public sealed class FeatureFlagsController : ControllerBase
         return Ok(result.Value);
     }
 
+    /// <summary>
+    /// Retrieves all configured feature flags.
+    /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
@@ -48,6 +58,9 @@ public sealed class FeatureFlagsController : ControllerBase
         return Ok(result.Value);
     }
 
+    /// <summary>
+    /// Updates an existing feature flag.
+    /// </summary>
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateFeatureFlagRequest request)
     {
@@ -61,7 +74,8 @@ public sealed class FeatureFlagsController : ControllerBase
             request.Name,
             request.Description,
             request.IsEnabled,
-            request.RolloutPercentage);
+            request.RolloutPercentage,
+            request.TargetingRules?.Select(rule => new TargetingRuleDto(rule.Attribute, rule.Operator, rule.Value)));
 
         Result result = await _sender.Send(command);
 
@@ -76,6 +90,9 @@ public sealed class FeatureFlagsController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Deletes a feature flag.
+    /// </summary>
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
@@ -89,6 +106,9 @@ public sealed class FeatureFlagsController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    /// Creates a new feature flag.
+    /// </summary>
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateFeatureFlagRequest request)
     {
@@ -97,7 +117,8 @@ public sealed class FeatureFlagsController : ControllerBase
             request.Name,
             request.Description,
             request.IsEnabled,
-            request.RolloutPercentage);
+            request.RolloutPercentage,
+            request.TargetingRules?.Select(rule => new TargetingRuleDto(rule.Attribute, rule.Operator, rule.Value)));
 
         Result<Guid> result = await _sender.Send(command);
 
@@ -118,12 +139,17 @@ public sealed class FeatureFlagsController : ControllerBase
         string Name,
         string Description,
         bool IsEnabled,
-        int RolloutPercentage);
+        int RolloutPercentage,
+        IEnumerable<TargetingRuleRequest>? TargetingRules);
 
     public sealed record UpdateFeatureFlagRequest(
         Guid Id,
         string Name,
         string Description,
         bool IsEnabled,
-        int RolloutPercentage);
+        int RolloutPercentage,
+        IEnumerable<TargetingRuleRequest>? TargetingRules);
+
+    public sealed record TargetingRuleRequest(string Attribute, string Operator, string Value);
 }
+

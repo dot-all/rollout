@@ -5,6 +5,9 @@ using Rollout.Application.Common.Interfaces;
 
 namespace Rollout.Application.Features.FeatureFlags.Read;
 
+/// <summary>
+/// Handles the retrieval of all configured feature flags.
+/// </summary>
 public sealed class GetAllFeatureFlagsQueryHandler : IRequestHandler<GetAllFeatureFlagsQuery, Result<IEnumerable<FeatureFlagDto>>>
 {
     private readonly IFeatureFlagRepository _featureFlagRepository;
@@ -22,3 +25,4 @@ public sealed class GetAllFeatureFlagsQueryHandler : IRequestHandler<GetAllFeatu
         return Result.Ok(result);
     }
 }
+

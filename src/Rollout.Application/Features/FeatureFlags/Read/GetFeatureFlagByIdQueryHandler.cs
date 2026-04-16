@@ -4,6 +4,9 @@ using Rollout.Application.Common.Interfaces;
 
 namespace Rollout.Application.Features.FeatureFlags.Read;
 
+/// <summary>
+/// Handles the retrieval of a single feature flag by its ID.
+/// </summary>
 public sealed class GetFeatureFlagByIdQueryHandler : IRequestHandler<GetFeatureFlagByIdQuery, Result<FeatureFlagDto>>
 {
     private readonly IFeatureFlagRepository _featureFlagRepository;
@@ -25,3 +28,4 @@ public sealed class GetFeatureFlagByIdQueryHandler : IRequestHandler<GetFeatureF
         return Result.Ok(FeatureFlagDto.FromEntity(featureFlag));
     }
 }
+
